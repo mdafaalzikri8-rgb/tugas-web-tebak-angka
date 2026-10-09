@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Game Center - Tugas Akhir Pemrograman Web 1</title>
+    <title>dafagameamatir - Tugas Akhir Pemrograman Web 1</title>
     <!-- Google Fonts & FontAwesome untuk Multimedia/Ikon -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -71,6 +71,7 @@
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s;
+            cursor: pointer;
         }
 
         .nav-links a:hover {
@@ -214,12 +215,12 @@
     <!-- HEADER & HYPERLINK NAVIGATION -->
     <header>
         <nav>
-            <div class="logo"><i class="fa-solid fa-gamepad"></i> WebGame TIF</div>
+            <div class="logo"><i class="fa-solid fa-gamepad"></i> dafagameamatir</div>
             <ul class="nav-links">
-                <li><a href="#" onclick="switchSection('home')"><i class="fa-solid fa-house"></i> Beranda</a></li>
-                <li><a href="#" onclick="switchSection('tebakAngka')"><i class="fa-solid fa-dice"></i> Tebak Angka</a></li>
-                <li><a href="#" onclick="switchSection('kuis')"><i class="fa-solid fa-brain"></i> Kuis</a></li>
-                <li><a href="#" onclick="switchSection('about')"><i class="fa-solid fa-user-graduate"></i> Tentang</a></li>
+                <li><a onclick="switchSection('home')"><i class="fa-solid fa-house"></i> Beranda</a></li>
+                <li><a onclick="switchSection('tebakAngka')"><i class="fa-solid fa-dice"></i> Tebak Angka</a></li>
+                <li><a onclick="switchSection('kuis')"><i class="fa-solid fa-brain"></i> Kuis</a></li>
+                <li><a onclick="switchSection('about')"><i class="fa-solid fa-user-graduate"></i> Tentang</a></li>
             </ul>
         </nav>
     </header>
@@ -230,7 +231,7 @@
         <!-- 1. BERANDA (Konten Utama) -->
         <section id="home" class="section active">
             <div class="card">
-                <h1>Selamat Datang di Portal Mini Game</h1>
+                <h1>Selamat Datang di dafagameamatir</h1>
                 <p>Aplikasi web interaktif ini dikembangkan sebagai Proyek Tugas Akhir mata kuliah <strong>Pemrograman Web 1</strong>. Nikmati permainan tebak angka dan kuis pengetahuan umum yang dibangun menggunakan HTML5, CSS3, dan JavaScript murni.</p>
                 <div style="margin-top: 2rem;">
                     <button class="btn" onclick="switchSection('tebakAngka')">Mulai Tebak Angka <i class="fa-solid fa-arrow-right"></i></button>
@@ -300,19 +301,41 @@
 
     <!-- FOOTER -->
     <footer>
-        <p>&copy; 2026 Tugas Akhir Pemrograman Web 1 | Dibuat dengan semangat oleh Mahasiswa Semester 5.</p>
+        <p>&copy; 2026 dafagameamatir | Tugas Akhir Pemrograman Web 1</p>
     </footer>
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Fungsi Navigasi Antar Bagian (Hyperlink Section)
+        // Efek Suara Klik / Menu (Web Audio API)
+        function playClickSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.08);
+            } catch (e) {
+                // Ignore audio context restriction
+            }
+        }
+
+        // Fungsi Navigasi Antar Bagian dengan Efek Suara
         function switchSection(sectionId) {
+            playClickSound();
             const sections = document.querySelectorAll('.section');
             sections.forEach(sec => sec.classList.remove('active'));
             document.getElementById(sectionId).classList.add('active');
         }
 
-        // Efek Suara Sederhana menggunakan Web Audio API (Multimedia Sound Effect)
+        // Efek Suara Sederhana untuk Game (Menang/Kalah)
         function playSound(type) {
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -337,7 +360,7 @@
                     osc.stop(audioCtx.currentTime + 0.3);
                 }
             } catch (e) {
-                // Ignore audio context restriction before user interaction
+                // Ignore
             }
         }
 
@@ -347,6 +370,7 @@
         let skorTebak = 0;
 
         function prosesTebakan() {
+            playClickSound();
             const inputEl = document.getElementById('inputTebakan');
             const feedbackEl = document.getElementById('feedbackTebak');
             const tebakan = parseInt(inputEl.value);
@@ -386,6 +410,7 @@
         }
 
         function resetTebakAngka() {
+            playClickSound();
             angkaRahasia = Math.floor(Math.random() * 50) + 1;
             sisaKesempatan = 10;
             document.getElementById('sisaKesempatan').textContent = sisaKesempatan;
@@ -417,6 +442,7 @@
         let skorKuis = 0;
 
         function mulaiKuis() {
+            playClickSound();
             indeksSoal = 0;
             skorKuis = 0;
             document.getElementById('quiz-question-box').style.display = 'block';
@@ -462,6 +488,7 @@
         }
 
         function cekJawabanKuis(pilihanIndex) {
+            playClickSound();
             if (pilihanIndex === soalKuis[indeksSoal].jawaban) {
                 skorKuis += 10;
                 playSound('win');
