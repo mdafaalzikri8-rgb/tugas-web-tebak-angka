@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Game Center - Tugas Akhir Pemrograman Web 1</title>
+    <!-- Google Fonts & FontAwesome untuk Multimedia/Ikon -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent: #22c55e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER & NAVIGATION (Hyperlink) */
+        header {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* MAIN CONTENT CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            flex: 1;
+            width: 100%;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* CARD DESIGN */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        h1, h2 {
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        p {
+            color: #94a3b8;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        /* FORM STYLING */
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+        }
+
+        /* BUTTONS */
+        .btn {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity 0.3s, transform 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #334155;
+            margin-left: 0.5rem;
+        }
+
+        /* GAME ELEMENTS */
+        .game-box {
+            margin-top: 1.5rem;
+        }
+
+        .feedback {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 1rem 0;
+            min-height: 30px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--card-bg);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER & HYPERLINK NAVIGATION -->
+    <header>
+        <nav>
+            <div class="logo"><i class="fa-solid fa-gamepad"></i> WebGame TIF</div>
+            <ul class="nav-links">
+                <li><a href="#" onclick="switchSection('home')"><i class="fa-solid fa-house"></i> Beranda</a></li>
+                <li><a href="#" onclick="switchSection('tebakAngka')"><i class="fa-solid fa-dice"></i> Tebak Angka</a></li>
+                <li><a href="#" onclick="switchSection('kuis')"><i class="fa-solid fa-brain"></i> Kuis</a></li>
+                <li><a href="#" onclick="switchSection('about')"><i class="fa-solid fa-user-graduate"></i> Tentang</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- CONTENT CONTAINER -->
+    <div class="container">
+
+        <!-- 1. BERANDA (Konten Utama) -->
+        <section id="home" class="section active">
+            <div class="card">
+                <h1>Selamat Datang di Portal Mini Game</h1>
+                <p>Aplikasi web interaktif ini dikembangkan sebagai Proyek Tugas Akhir mata kuliah <strong>Pemrograman Web 1</strong>. Nikmati permainan tebak angka dan kuis pengetahuan umum yang dibangun menggunakan HTML5, CSS3, dan JavaScript murni.</p>
+                <div style="margin-top: 2rem;">
+                    <button class="btn" onclick="switchSection('tebakAngka')">Mulai Tebak Angka <i class="fa-solid fa-arrow-right"></i></button>
+                    <button class="btn btn-secondary" onclick="switchSection('kuis')">Mulai Kuis <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. GAME TEBAK ANGKA (Form & JavaScript Interaktif) -->
+        <section id="tebakAngka" class="section">
+            <div class="card">
+                <h2><i class="fa-solid fa-dice"></i> Game Tebak Angka</h2>
+                <p>Komputer telah memilih angka acak antara <strong>1 sampai 50</strong>. Coba tebak dengan sisa kesempatan yang ada!</p>
+                
+                <div class="stats">
+                    <div>Kesempatan: <span id="sisaKesempatan" style="color: var(--accent); font-weight: 700;">10</span></div>
+                    <div>Skor: <span id="skorTebak" style="color: var(--primary); font-weight: 700;">0</span></div>
+                </div>
+
+                <div class="game-box">
+                    <div class="form-group">
+                        <label for="inputTebakan">Masukkan Angka (1 - 50):</label>
+                        <input type="number" id="inputTebakan" min="1" max="50" placeholder="Contoh: 25">
+                    </div>
+                    <button class="btn" id="btnTebak" onclick="prosesTebakan()">Tebak Sekarang</button>
+                    <button class="btn btn-secondary" onclick="resetTebakAngka()">Reset Game</button>
+                    <div class="feedback" id="feedbackTebak"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. KUIS SEDERHANA (Multimedia, Form & JS) -->
+        <section id="kuis" class="section">
+            <div class="card">
+                <h2><i class="fa-solid fa-brain"></i> Kuis Pengetahuan Web</h2>
+                <div id="quiz-container">
+                    <div id="quiz-question-box">
+                        <p id="soalPertanyaan" style="font-size: 1.2rem; color: #fff; font-weight: 600;"></p>
+                        <div id="pilihanOpsi" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;"></div>
+                    </div>
+                    <div id="quiz-result" style="display: none;">
+                        <h3>Kuis Selesai!</h3>
+                        <p id="hasilSkorKuis" style="font-size: 1.3rem; margin: 1rem 0;"></p>
+                        <button class="btn" onclick="mulaiKuis()">Ulangi Kuis</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. TENTANG PEMBUAT (Konten & Hyperlink Eksternal) -->
+        <section id="about" class="section">
+            <div class="card">
+                <h2><i class="fa-solid fa-id-card"></i> Tentang Pengembang</h2>
+                <p>Proyek web ini disusun guna memenuhi ujian akhir semester / tugas akhir mata kuliah Pemrograman Web 1.</p>
+                <div style="background: rgba(15, 23, 42, 0.5); padding: 1.5rem; border-radius: 8px; text-align: left; margin-bottom: 1.5rem;">
+                    <p style="margin-bottom: 0.5rem;"><strong>Mata Kuliah:</strong> Pemrograman Web 1</p>
+                    <p style="margin-bottom: 0.5rem;"><strong>Teknologi:</strong> HTML5, CSS3, JavaScript (ES6)</p>
+                    <p style="margin-bottom: 0;"><strong>Fitur Utama:</strong> Responsive Design, DOM Manipulation, Event Handling, Web Audio API.</p>
+                </div>
+                <!-- Contoh Hyperlink Eksternal -->
+                <p>Terhubung dengan repositori atau referensi belajar:</p>
+                <a href="https://github.com" target="_blank" class="btn" style="text-decoration: none;"><i class="fa-brands fa-github"></i> Kunjungi GitHub</a>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2026 Tugas Akhir Pemrograman Web 1 | Dibuat dengan semangat oleh Mahasiswa Semester 5.</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Fungsi Navigasi Antar Bagian (Hyperlink Section)
+        function switchSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(sec => sec.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        // Efek Suara Sederhana menggunakan Web Audio API (Multimedia Sound Effect)
+        function playSound(type) {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                if (type === 'win') {
+                    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.2);
+                } else if (type === 'lose') {
+                    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                }
+            } catch (e) {
+                // Ignore audio context restriction before user interaction
+            }
+        }
+
+        // --- GAME 1: TEBAK ANGKA LOGIC ---
+        let angkaRahasia = Math.floor(Math.random() * 50) + 1;
+        let sisaKesempatan = 10;
+        let skorTebak = 0;
+
+        function prosesTebakan() {
+            const inputEl = document.getElementById('inputTebakan');
+            const feedbackEl = document.getElementById('feedbackTebak');
+            const tebakan = parseInt(inputEl.value);
+
+            if (isNaN(tebakan) || tebakan < 1 || tebakan > 50) {
+                feedbackEl.style.color = '#ef4444';
+                feedbackEl.textContent = '⚠️ Masukkan angka yang valid antara 1 sampai 50!';
+                return;
+            }
+
+            sisaKesempatan--;
+            document.getElementById('sisaKesempatan').textContent = sisaKesempatan;
+
+            if (tebakan === angkaRahasia) {
+                feedbackEl.style.color = '#22c55e';
+                feedbackEl.textContent = `🎉 Selamat! Tebakan Anda benar (${angkaRahasia}).`;
+                skorTebak += 10;
+                document.getElementById('skorTebak').textContent = skorTebak;
+                playSound('win');
+                document.getElementById('btnTebak').disabled = true;
+            } else if (sisaKesempatan === 0) {
+                feedbackEl.style.color = '#ef4444';
+                feedbackEl.textContent = `❌ Game Over! Angka rahasianya adalah ${angkaRahasia}.`;
+                playSound('lose');
+                document.getElementById('btnTebak').disabled = true;
+            } else if (tebakan < angkaRahasia) {
+                feedbackEl.style.color = '#f59e0b';
+                feedbackEl.textContent = '📈 Terlalu KECIL! Coba angka yang lebih besar.';
+                playSound('lose');
+            } else {
+                feedbackEl.style.color = '#f59e0b';
+                feedbackEl.textContent = '📉 Terlalu BESAR! Coba angka yang lebih kecil.';
+                playSound('lose');
+            }
+            inputEl.value = '';
+            inputEl.focus();
+        }
+
+        function resetTebakAngka() {
+            angkaRahasia = Math.floor(Math.random() * 50) + 1;
+            sisaKesempatan = 10;
+            document.getElementById('sisaKesempatan').textContent = sisaKesempatan;
+            document.getElementById('feedbackTebak').textContent = '';
+            document.getElementById('btnTebak').disabled = false;
+            document.getElementById('inputTebakan').value = '';
+        }
+
+        // --- GAME 2: KUIS PENGETAHUAN WEB ---
+        const soalKuis = [
+            {
+                tanya: "Tag HTML apa yang digunakan untuk membuat hyperlink?",
+                opsi: ["<a>", "<link>", "<href>", "<url>"],
+                jawaban: 0
+            },
+            {
+                tanya: "Properti CSS apa yang digunakan untuk mengubah warna teks?",
+                opsi: ["font-color", "text-style", "color", "background-color"],
+                jawaban: 2
+            },
+            {
+                tanya: "Metode JavaScript apa yang digunakan untuk menampilkan data di console?",
+                opsi: ["print()", "console.log()", "debug.log()", "alert()"],
+                jawaban: 1
+            }
+        ];
+
+        let indeksSoal = 0;
+        let skorKuis = 0;
+
+        function mulaiKuis() {
+            indeksSoal = 0;
+            skorKuis = 0;
+            document.getElementById('quiz-question-box').style.display = 'block';
+            document.getElementById('quiz-result').style.display = 'none';
+            tampilkanSoal();
+        }
+
+        function tampilkanSoal() {
+            if (indeksSoal < soalKuis.length) {
+                const current = soalKuis[indeksSoal];
+                document.getElementById('soalPertanyaan').textContent = `Soal ${indeksSoal + 1}: ${current.tanya}`;
+                const opsiContainer = document.getElementById('pilihanOpsi');
+                opsiContainer.innerHTML = '';
+
+                current.opsi.forEach((opsi, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn btn-secondary';
+                    styleQuizButton(btn);
+                    btn.textContent = opsi;
+                    btn.onclick = () => cekJawabanKuis(index);
+                    opsiContainer.appendChild(btn);
+                });
+            } else {
+                document.getElementById('quiz-question-box').style.display = 'none';
+                document.getElementById('quiz-result').style.display = 'block';
+                document.getElementById('hasilSkorKuis').textContent = `Skor Akhir Kuis Anda: ${skorKuis} dari ${soalKuis.length * 10}`;
+                playSound('win');
+            }
+        }
+
+        function styleQuizButton(btn) {
+            btn.style.width = '100%';
+            btn.style.textAlign = 'left';
+            btn.style.padding = '1rem';
+            btn.style.background = '#334155';
+            btn.style.border = '1px solid #475569';
+            btn.style.borderRadius = '8px';
+            btn.style.cursor = 'pointer';
+            btn.style.color = '#fff';
+            btn.style.fontWeight = '500';
+            btn.onmouseover = () => btn.style.background = '#475569';
+            btn.onmouseout = () => btn.style.background = '#334155';
+        }
+
+        function cekJawabanKuis(pilihanIndex) {
+            if (pilihanIndex === soalKuis[indeksSoal].jawaban) {
+                skorKuis += 10;
+                playSound('win');
+            } else {
+                playSound('lose');
+            }
+            indeksSoal++;
+            tampilkanSoal();
+        }
+
+        // Inisialisasi Kuis saat pertama kali dimuat
+        mulaiKuis();
+    </script>
+</body>
+</html>
